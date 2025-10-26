@@ -1,23 +1,17 @@
-import React, { Component } from "react";
+import React from "react";
 import Card from "./Card";
 
-class App extends Component {
-    render() {
-        return (
-            <div style={{ width: "400px", margin: "30px auto" }}>
-                <h3 style={{ textAlign: "center" }}>Definitions (Card V2)</h3>
-
-                {/* 1️⃣ тільки title */}
-                <Card title="Coffee" />
-
-                {/* 2️⃣ тільки text */}
-                <Card text="Black hot drink" />
-
-                {/* 3️⃣ обидва пропси */}
-                <Card title="Milk" text="White cold drink" />
-            </div>
-        );
-    }
+function App() {
+    return (
+        <div>
+            {/* 1. Only title */}
+            <Card title="hi" />
+            {/* 2. Only text */}
+            <Card text="how are you?" />
+            {/* 3. Both title and text */}
+            <Card title="hi" text="how are you?" />
+        </div>
+    );
 }
 
 export default App;

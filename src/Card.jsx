@@ -1,18 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 
-class Card extends Component {
-    render() {
-        const { title, text } = this.props;
-        if (!title && !text) {
-            return null;
-        }
-        return (
-            <dl style={{ border: "1px solid #ccc", padding: "10px", margin: "10px" }}>
-                {title && <dt>{title}</dt>}
-                {text && <dd>{text}</dd>}
-            </dl>
-        );
-    }
+function Card({ title, text }) {
+    return (
+        <div className="card">
+            <div className="card-body">
+                {title && <h4 className="card-title">{title}</h4>}
+                {text && <p className="card-text">{text}</p>}
+            </div>
+        </div>
+    );
 }
 
 export default Card;
