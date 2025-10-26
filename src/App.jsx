@@ -1,17 +1,13 @@
 import React from "react";
-import Card from "./Card";
+import Definitions from "./Definitions";
 
 function App() {
-    return (
-        <div>
-            {/* 1. Only title */}
-            <Card title="hi" />
-            {/* 2. Only text */}
-            <Card text="how are you?" />
-            {/* 3. Both title and text */}
-            <Card title="hi" text="how are you?" />
-        </div>
-    );
+    const definitions = [
+        { dt: "one", dd: "two", id: 1 },
+        { dt: "another term", dd: "another description", id: 2 },
+    ];
+
+    return <Definitions data={definitions} />;
 }
 
 export default App;
