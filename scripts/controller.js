@@ -1,60 +1,61 @@
 import { Model } from './model.js';
 import { View } from './view.js';
 
-const Controller = (() => {
-    let favorites = [];
+class Controller {
+    constructor(model, view) {
+        this.model = model;
+        this.view = view;
 
-    function bindEvents() {
-        const r = View.refs;
-        r.searchBtn.addEventListener('click', onSearch);
-        r.cityInput.addEventListener('keydown', e => { if (e.key === 'Enter') onSearch(); });
-        r.addFavBtn.addEventListener('click', onAddFav);
-        r.favoritesList.addEventListener('click', onFavoritesClick);
+        this.view.bindSearch(() => this.onSearch());
+        this.view.bindAddFavorite(() => this.onAddFavorite());
+        this.view.bindFavoriteClick(
+            (city) => this.onFavoriteClick(city),
+            (city) => this.onRemoveFavorite(city)
+        );
+
+        this.init();
     }
 
-    async function onSearch() {
-        const r = View.refs;
-        View.clearError();
-        const city = r.cityInput.value.trim();
-        if (!city) { View.showError('Введіть назву міста'); return; }
+    async init() {
+        const favs = this.model.getFavorites();
+        this.view.renderFavorites(favs);
+
+        if (favs.length > 0) {
+            this.onFavoriteClick(favs[0]);
+        }
+    }
+
+    async onSearch() {
+        const city = this.view.getInput();
+        if (!city) return;
         try {
-            const coords = await Model.fetchCoords(city);
-            if (!coords) { View.showError('Місто не знайдено'); return; }
-            const weather = await Model.fetchWeather(coords.latitude, coords.longitude);
-            View.renderCurrent(coords, weather);
+            const data = await this.model.getWeather(city);
+            this.view.renderWeather(data);
+            this.view.clearInput();
         } catch (err) {
-            console.error(err);
-            View.showError(err.message || 'Сталася помилка');
+            this.view.showError('Місто не знайдено');
         }
     }
 
-    function onAddFav() {
-        const data = View.refs.addFavBtn.dataset.city;
-        if (!data) return;
-        const cityObj = JSON.parse(data);
-        const exists = favorites.some(f => f.name === cityObj.name && f.country === cityObj.country);
-        if (!exists) {
-            favorites.unshift(cityObj);
-            View.renderFavorites(favorites);
+    async onAddFavorite() {
+        const city = this.view.cityName.textContent.split(',')[0];
+        if (!city) return;
+        this.model.addFavorite(city);
+        this.view.renderFavorites(this.model.getFavorites());
+    }
+
+    async onFavoriteClick(city) {
+        try {
+            const data = await this.model.getWeather(city);
+            this.view.renderWeather(data);
+        } catch (err) {
+            this.view.showError('Не вдалося завантажити дані');
         }
     }
-
-    function onFavoritesClick(e) {
-        const t = e.target;
-        if (t.classList.contains('btn-remove')) {
-            const idx = Number(t.dataset.idx);
-            favorites.splice(idx, 1);
-            View.renderFavorites(favorites);
-        }
+    onRemoveFavorite(city) {
+        this.model.removeFavorite(city);
+        this.view.renderFavorites(this.model.getFavorites());
     }
+}
 
-    function start() {
-        View.init();
-        View.renderFavorites(favorites);
-        bindEvents();
-    }
-
-    return { start };
-})();
-
-document.addEventListener('DOMContentLoaded', () => Controller.start());
+const app = new Controller(new Model(), new View());
