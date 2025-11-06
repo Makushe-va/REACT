@@ -1,0 +1,27 @@
+
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+}
+.component {
+  margin-bottom: 30px;
+}
+.btn-left {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+}
+.btn-left:hover {
+  background-color: #0b5ed7;
+  border-color: #0b5ed7;
+}
+
+.btn-right {
+  background-color: #198754;
+  border-color: #198754;
+  color: #fff;
+}
+.btn-left.active,
+.btn-right.active {
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,0.25);
+}
